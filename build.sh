@@ -3,6 +3,7 @@
 #
 #   ./build.sh doctor   环境体检
 #   ./build.sh init     repo init + 安装 local_manifests/cannon.xml
+#   ./build.sh init-pin 用快照 manifest 初始化（所有 project 固定到 commit）
 #   ./build.sh sync     repo sync（浅克隆，失败后自动校验）
 #   ./build.sh check    校验每个项目是否仍是浅克隆
 #   ./build.sh repair   对浅克隆退化的项目删除后单项目重拉
@@ -19,6 +20,8 @@ ROM_DIR="${ROM_DIR:-/cannon/twrp16}"
 JOBS="${JOBS:-$(nproc)}"
 MANIFEST_URL="${MANIFEST_URL:-https://github.com/TWRP-Test/platform_manifest_twrp_aosp}"
 MANIFEST_BRANCH="${MANIFEST_BRANCH:-twrp-16.0}"
+SNAPSHOT_MANIFEST_URL="${SNAPSHOT_MANIFEST_URL:-https://github.com/top-android/twrp-build.git}"
+SNAPSHOT_MANIFEST_FILE="${SNAPSHOT_MANIFEST_FILE:-local_manifests/cannon-snapshot.xml}"
 LUNCH_TARGET="${LUNCH_TARGET:-twrp_cannon-bp2a-eng}"
 SRC_DIR="$(cd "$(dirname "$0")" && pwd)"
 
@@ -103,6 +106,20 @@ cmd_repair() {
     cmd_check
 }
 
+cmd_init_pin() {
+    mkdir -p "$ROM_DIR"
+    cd "$ROM_DIR"
+    [ -d .repo ] && die "$ROM_DIR 已有 .repo；精确重建请用空目录"
+    # The snapshot manifest pins every project (including ours and upstream
+    # TWRP-Test / LineageOS ones) to an exact commit, so the build is
+    # reproducible from scratch.
+    repo init -u "$SNAPSHOT_MANIFEST_URL" -b main -m "$SNAPSHOT_MANIFEST_FILE" --depth=1
+    local depth
+    depth="$(git -C .repo/manifests.git config --get repo.depth 2>/dev/null || true)"
+    [ "$depth" = "1" ] || die "工作区不是浅克隆（repo.depth=${depth:-unset}）"
+    log "已用快照 manifest 初始化：所有 project 固定到 commit"
+}
+
 cmd_build() {
     cd "$ROM_DIR"
     export ALLOW_MISSING_DEPENDENCIES=true
@@ -116,10 +133,11 @@ cmd_build() {
 case "${1:-all}" in
     doctor) cmd_doctor ;;
     init)   cmd_init ;;
+    init-pin) cmd_init_pin ;;
     sync)   cmd_sync ;;
     check)  cmd_check ;;
     repair) cmd_repair ;;
     build)  cmd_build ;;
     all)    cmd_doctor; cmd_init; cmd_sync; cmd_build ;;
-    *)      die "unknown command: $1 (doctor|init|sync|check|repair|build|all)" ;;
+    *)      die "unknown command: $1 (doctor|init|init-pin|sync|check|repair|build|all)" ;;
 esac

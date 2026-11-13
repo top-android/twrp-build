@@ -25,6 +25,22 @@ cd twrp-build
 
 单独步骤：`./build.sh init` / `sync` / `check` / `repair` / `build`。
 
+## 从零精确复现
+
+`local_manifests/cannon-snapshot.xml` 是构建产物 `4780539593f6862f23cf3796176ac75d`
+时的完整 manifest（396 个 project，每个 `revision` 都是 commit sha，含本仓两个提交
+和 TWRP-Test / LineageOS 上游）。用空目录执行：
+
+```bash
+git clone https://github.com/top-android/twrp-build.git
+cd twrp-build
+./build.sh init-pin     # repo init -m local_manifests/cannon-snapshot.xml --depth=1
+./build.sh sync
+./build.sh build
+```
+
+`init-pin` 要求空目录；若只是想跟上游最新代码，仍用 `./build.sh init`。
+
 ## 同步（浅克隆）
 
 `sync` 固定使用 `--depth=1` + `-c --fail-fast`。若 sync 在 `early EOF` 后原位重试，

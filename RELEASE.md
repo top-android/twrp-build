@@ -80,6 +80,14 @@ cd twrp-build
 单独步骤：`./build.sh init` / `sync` / `check` / `repair` / `build`。
 产物：`out/target/product/cannon/recovery.img`。
 
+需要从零精确复现本镜像时，用快照 manifest（所有项目固定到 commit）：
+
+```bash
+./build.sh init-pin    # 空目录；repo init -m local_manifests/cannon-snapshot.xml
+./build.sh sync
+./build.sh build
+```
+
 同步固定使用 `--depth=1` + `-c --fail-fast`；若 `early EOF` 后重试导致某个项目退化成
 完整历史，`sync` 结束会自动 `check`，用 `./build.sh repair` 单项目重拉恢复浅克隆。
 
