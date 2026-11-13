@@ -28,8 +28,4 @@
              name="twrp_bootable_recovery"
              remote="top" revision="main" />
 
-    <!-- vold：保持 AOSP16 createOperation(false)，A17 解密靠设备树补丁级别修复 -->
-    <project path="system/vold"
-             name="twrp_system_vold"
-             remote="top" revision="main" />
 </manifest>

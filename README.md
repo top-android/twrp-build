@@ -2,13 +2,14 @@
 
 Xiaomi Redmi Note 9T 5G（`cannon`，MT6853）在 **TWRP 16.0（TWRP-Test / YARP `twrp-16.0`）** 上的构建入口。
 
-只覆盖三个有本地修改的仓，其余 project 继续跟 TWRP-Test 的 `default.xml`：
+只覆盖有本地净改动的仓，其余 project（含 `system/vold`）继续跟 TWRP-Test 的 `default.xml`：
+
+> `system/vold` 已核实**相对上游净改动为 0**（`createOperation` 的 `false` 就是上游默认值），不再单独维护。
 
 | 路径 | 仓库 | 关键改动 |
 |---|---|---|
 | `device/xiaomi/cannong` | `top-android/twrp_device_xiaomi_cannon` | **A17 解密补丁级别**（`PLATFORM_SECURITY_PATCH` 必须等于系统真实值）、gatekeeper `beanpod`、震动 `haptic_pwm` + AW8622 固件、默认中文/UTC+8/24h、代号 `cannon`、OTA assert 绕过、fscrypt v2 |
 | `bootable/recovery` | `top-android/twrp_bootable_recovery` | `haptic_pwm` 震动后端、`ro.twrp.boot` 开关、默认 `zh_CN` / `CST-8` / 24h |
-| `system/vold` | `top-android/twrp_system_vold` | 保持 AOSP16 `createOperation(false)`（`true` 会导致卡 logo 循环） |
 
 ## 用法
 
