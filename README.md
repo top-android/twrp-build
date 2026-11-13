@@ -34,12 +34,14 @@ cd twrp-build
 ```bash
 git clone https://github.com/top-android/twrp-build.git
 cd twrp-build
-./build.sh init-pin     # repo init -m local_manifests/cannon-snapshot.xml --depth=1
-./build.sh sync
-./build.sh build
+ROM_DIR=/cannon/twrp16-new ./build.sh init-pin
+ROM_DIR=/cannon/twrp16-new ./build.sh sync
+ROM_DIR=/cannon/twrp16-new ./build.sh build
 ```
 
-`init-pin` 要求空目录；若只是想跟上游最新代码，仍用 `./build.sh init`。
+`ROM_DIR` 必须是空目录（默认 `/cannon/twrp16`；若该目录已有 `.repo`，`init-pin` 会拒绝）。
+产物在 `$ROM_DIR/out/target/product/cannon/recovery.img`，md5 应为
+`4780539593f6862f23cf3796176ac75d`。
 
 ## 同步（浅克隆）
 
