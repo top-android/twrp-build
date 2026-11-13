@@ -3,7 +3,9 @@
 #
 #   ./build.sh doctor   环境体检
 #   ./build.sh init     repo init + 安装 local_manifests/cannon.xml
-#   ./build.sh sync     repo sync
+#   ./build.sh sync     repo sync（浅克隆，失败后自动校验）
+#   ./build.sh check    校验每个项目是否仍是浅克隆
+#   ./build.sh repair   对浅克隆退化的项目删除后单项目重拉
 #   ./build.sh build    lunch twrp_cannon-bp2a-eng + m recoveryimage
 #   ./build.sh all      init + sync + build
 #
@@ -42,7 +44,57 @@ cmd_init() {
 
 cmd_sync() {
     cd "$ROM_DIR"
-    repo sync -j"$JOBS" --force-sync --no-clone-bundle
+    # -c/--fail-fast keep every project at --depth=1. Without them a retry after
+    # an "early EOF" leaves a non-shallow project behind and refetches its full
+    # history (prebuilts/sdk: 1 commit vs 20582, 1.8G vs 17.4G).
+    if ! repo sync -j"$JOBS" -c --fail-fast --force-sync --no-clone-bundle; then
+        die "repo sync 失败；先运行 ./build.sh check，必要时 ./build.sh repair"
+    fi
+    cmd_check
+}
+
+cmd_check() {
+    cd "$ROM_DIR"
+    [ -d .repo ] || die "不是 repo 工作区：$ROM_DIR"
+    local total=0 missing=0
+    while IFS= read -r gitdir; do
+        total=$((total + 1))
+        if [ ! -f "$gitdir/shallow" ]; then
+            echo "MISSING: $gitdir"
+            missing=$((missing + 1))
+        fi
+    done < <(find .repo/projects -name '*.git' -type d)
+    echo "projects=$total missing=$missing"
+    if [ "$missing" -ne 0 ]; then
+        die "有项目退化成完整历史：运行 ./build.sh repair"
+    fi
+}
+
+cmd_repair() {
+    cd "$ROM_DIR"
+    [ -d .repo ] || die "不是 repo 工作区：$ROM_DIR"
+    local broken=()
+    while IFS= read -r gitdir; do
+        [ -f "$gitdir/shallow" ] || broken+=("$gitdir")
+    done < <(find .repo/projects -name '*.git' -type d)
+    [ "${#broken[@]}" -gt 0 ] || { log "所有项目仍是浅克隆，无需修复"; return; }
+
+    for gitdir in "${broken[@]}"; do
+        local path="${gitdir#.repo/projects/}"
+        path="${path%.git}"
+        local name
+        name="$(git -C "$gitdir" config --get-regexp '^remote\..*\.projectname$' |
+            head -1 | awk '{print $2}')" || true
+        log "修复 $path（${name:-unknown}）"
+        # Removing all three records makes repo treat the project as new, so the
+        # refetch honours --depth=1 instead of pulling the full history.
+        rm -rf "$gitdir"
+        [ -n "$name" ] && rm -rf ".repo/project-objects/$name.git"
+        rm -rf "$path"
+        repo sync -j1 --fail-fast -c --no-tags --no-clone-bundle "$path" ||
+            die "重拉失败：$path"
+    done
+    cmd_check
 }
 
 cmd_build() {
@@ -59,7 +111,9 @@ case "${1:-all}" in
     doctor) cmd_doctor ;;
     init)   cmd_init ;;
     sync)   cmd_sync ;;
+    check)  cmd_check ;;
+    repair) cmd_repair ;;
     build)  cmd_build ;;
     all)    cmd_doctor; cmd_init; cmd_sync; cmd_build ;;
-    *)      die "unknown command: $1 (doctor|init|sync|build|all)" ;;
+    *)      die "unknown command: $1 (doctor|init|sync|check|repair|build|all)" ;;
 esac

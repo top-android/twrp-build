@@ -23,7 +23,18 @@ cd twrp-build
 默认工作区 `/cannon/twrp16`，可用 `ROM_DIR=...` 覆盖；产物在
 `$ROM_DIR/out/target/product/cannon/recovery.img`。
 
-单独步骤：`./build.sh init` / `sync` / `build`。
+单独步骤：`./build.sh init` / `sync` / `check` / `repair` / `build`。
+
+## 同步（浅克隆）
+
+`sync` 固定使用 `--depth=1` + `-c --fail-fast`。若 sync 在 `early EOF` 后原位重试，
+repo 可能把该项目当成非浅克隆并拉完整历史（`prebuilts/sdk` 从 1 个 commit / 1.8G
+涨到 20582 个 commit / 17.4G）。`sync` 结束会自动执行 `check`：
+
+```bash
+./build.sh check    # 列出 shallow 缺失的项目，missing 必须为 0
+./build.sh repair   # 删除三处记录后单项目重拉，恢复浅克隆
+```
 
 ## A17 解密必读
 
