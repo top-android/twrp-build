@@ -15,21 +15,25 @@
   A17（LineageOS 24）解密关键在设备树 BoardConfig.mk 的
   PLATFORM_SECURITY_PATCH（必须是系统真实值，不能是 2099-12-31），
   详见 docs/playbooks/A17_TWRP_CANNON_PORT.md。
+
+  构建基线（2026-11-13，产物 md5 4780539593f6862f23cf3796176ac75d）：
+  TWRP-Test platform_manifest_twrp_aosp twrp-16.0 @
+  814b553116ceedde197f70389cff9661d81d8337
 -->
 <manifest>
     <remote name="top"  fetch="https://github.com/top-android" />
     <remote name="twrp" fetch="https://github.com/TWRP-Test" />
 
     <!-- 设备树：代号 cannon，含 A17 解密补丁级别、gatekeeper、震动、中文/时区、
-         health HAL 的 VINTF/init 声明 -->
+         health HAL 的 VINTF/init 声明。revision 固定到提交，保证可复现。 -->
     <project path="device/xiaomi/cannong"
              name="twrp_device_xiaomi_cannon"
-             remote="top" revision="main" />
+             remote="top" revision="1c63a5a64d4c96172406bc17bb503d12d9fa4253" />
 
     <!-- TWRP recovery 源码：haptic_pwm 震动、ro.twrp.boot 开关、默认 zh_CN/CST-8/24h、
-         真实电量（sysfs 兜底）、状态栏显示秒 -->
+         真实电量（sysfs 兜底）、状态栏显示秒。revision 固定到提交，保证可复现。 -->
     <project path="bootable/recovery"
              name="twrp_bootable_recovery"
-             remote="top" revision="main" />
+             remote="top" revision="0890093bbdd4385c7fe98d538afc0c0986927a81" />
 
 </manifest>

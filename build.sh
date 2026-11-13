@@ -37,6 +37,9 @@ cmd_init() {
     mkdir -p "$ROM_DIR"
     cd "$ROM_DIR"
     [ -d .repo ] || repo init -u "$MANIFEST_URL" -b "$MANIFEST_BRANCH" --depth=1
+    local depth
+    depth="$(git -C .repo/manifests.git config --get repo.depth 2>/dev/null || true)"
+    [ "$depth" = "1" ] || die "工作区不是浅克隆（repo.depth=${depth:-unset}），请重建 .repo"
     mkdir -p .repo/local_manifests
     cp "$SRC_DIR"/local_manifests/*.xml .repo/local_manifests/
     log "local_manifests 已安装：$(ls .repo/local_manifests)"
@@ -44,6 +47,9 @@ cmd_init() {
 
 cmd_sync() {
     cd "$ROM_DIR"
+    # Check before syncing: an interrupted fetch leaves a project without a
+    # shallow file, and syncing it again is exactly what pulls the full history.
+    cmd_check
     # -c/--fail-fast keep every project at --depth=1. Without them a retry after
     # an "early EOF" leaves a non-shallow project behind and refetches its full
     # history (prebuilts/sdk: 1 commit vs 20582, 1.8G vs 17.4G).
