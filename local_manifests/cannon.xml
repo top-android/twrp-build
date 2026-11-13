@@ -2,13 +2,15 @@
 <!--
   Xiaomi Redmi Note 9T 5G（cannon / MT6853）— TWRP 16.0（TWRP-Test twrp-16.0）
 
-  本文件是 twrp-build 的 local_manifests overlay，只覆盖我们有本地修改的三个仓，
+  本文件是 twrp-build 的 local_manifests overlay，只覆盖我们有本地修改的两个仓，
   其余 project 继续跟 TWRP-Test 的 default.xml。
 
-  覆盖的三个仓（top-android，snapshot）：
+  覆盖的两个仓（top-android，main 分支）：
     device/xiaomi/cannong   ← top-android/twrp_device_xiaomi_cannon
     bootable/recovery       ← top-android/twrp_bootable_recovery
-    system/vold             ← top-android/twrp_system_vold
+
+  设备树源码目录名沿用 cannong（产品代号已是 cannon，产物在
+  out/target/product/cannon；同目录下的 cannon 是指向 cannong 的软链接）。
 
   A17（LineageOS 24）解密关键在设备树 BoardConfig.mk 的
   PLATFORM_SECURITY_PATCH（必须是系统真实值，不能是 2099-12-31），
@@ -18,12 +20,14 @@
     <remote name="top"  fetch="https://github.com/top-android" />
     <remote name="twrp" fetch="https://github.com/TWRP-Test" />
 
-    <!-- 设备树：代号 cannon，含 A17 解密补丁级别、gatekeeper、震动、中文/时区等 -->
+    <!-- 设备树：代号 cannon，含 A17 解密补丁级别、gatekeeper、震动、中文/时区、
+         health HAL 的 VINTF/init 声明 -->
     <project path="device/xiaomi/cannong"
              name="twrp_device_xiaomi_cannon"
              remote="top" revision="main" />
 
-    <!-- TWRP recovery 源码：haptic_pwm 震动、ro.twrp.boot 开关、默认 zh_CN/CST-8/24h -->
+    <!-- TWRP recovery 源码：haptic_pwm 震动、ro.twrp.boot 开关、默认 zh_CN/CST-8/24h、
+         真实电量（sysfs 兜底）、状态栏显示秒 -->
     <project path="bootable/recovery"
              name="twrp_bootable_recovery"
              remote="top" revision="main" />
