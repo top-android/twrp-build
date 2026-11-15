@@ -126,6 +126,10 @@ cmd_build() {
     # PRODUCT_DEVICE is cannon but the tree is checked out as cannong; the
     # build system locates BoardConfig.mk via device/<vendor>/<TARGET_DEVICE>.
     ln -sfn cannong device/xiaomi/cannon
+    local recovery_rev
+    recovery_rev="$(git -C bootable/recovery rev-parse --short=8 HEAD 2>/dev/null || echo unknown)"
+    git -C bootable/recovery diff --quiet 2>/dev/null || recovery_rev="${recovery_rev}-dirty"
+    log "recovery 版本：${recovery_rev}"
     export ALLOW_MISSING_DEPENDENCIES=true
     # envsetup.sh and its lunch/m helpers read optional variables such as TOP
     # without defaults; set -u would abort while sourcing them.
