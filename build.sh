@@ -44,7 +44,8 @@ cmd_init() {
     depth="$(git -C .repo/manifests.git config --get repo.depth 2>/dev/null || true)"
     [ "$depth" = "1" ] || die "工作区不是浅克隆（repo.depth=${depth:-unset}），请重建 .repo"
     mkdir -p .repo/local_manifests
-    cp "$SRC_DIR"/local_manifests/*.xml .repo/local_manifests/
+    rm -f .repo/local_manifests/*.xml
+    cp "$SRC_DIR"/local_manifests/cannon.xml .repo/local_manifests/
     log "local_manifests 已安装：$(ls .repo/local_manifests)"
 }
 
@@ -72,7 +73,7 @@ cmd_check() {
             echo "MISSING: $gitdir"
             missing=$((missing + 1))
         fi
-    done < <(find .repo/projects -name '*.git' -type d)
+    done < <(find .repo/projects -name '*.git' -type d 2>/dev/null)
     echo "projects=$total missing=$missing"
     if [ "$missing" -ne 0 ]; then
         die "有项目退化成完整历史：运行 ./build.sh repair"
@@ -85,7 +86,7 @@ cmd_repair() {
     local broken=()
     while IFS= read -r gitdir; do
         [ -f "$gitdir/shallow" ] || broken+=("$gitdir")
-    done < <(find .repo/projects -name '*.git' -type d)
+    done < <(find .repo/projects -name '*.git' -type d 2>/dev/null)
     [ "${#broken[@]}" -gt 0 ] || { log "所有项目仍是浅克隆，无需修复"; return; }
 
     for gitdir in "${broken[@]}"; do

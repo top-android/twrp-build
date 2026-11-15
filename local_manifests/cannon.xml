@@ -24,6 +24,11 @@
     <remote name="top"  fetch="https://github.com/top-android" />
     <remote name="twrp" fetch="https://github.com/TWRP-Test" />
 
+    <!-- TWRP 上游已经用 twrp-default.xml 把 platform/bootable/recovery 换成了
+         android_bootable_recovery；overlay 要再次替换，必须先移除它，
+         否则合并后会出现 duplicate path bootable/recovery。 -->
+    <remove-project name="android_bootable_recovery" />
+
     <!-- 设备树：代号 cannon，含 A17 解密补丁级别、gatekeeper、震动、中文/时区、
          health HAL 的 VINTF/init 声明。revision 固定到提交，保证可复现。 -->
     <project path="device/xiaomi/cannong"
