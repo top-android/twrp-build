@@ -123,7 +123,13 @@ cmd_init_pin() {
 
 cmd_build() {
     cd "$ROM_DIR"
+    # PRODUCT_DEVICE is cannon but the tree is checked out as cannong; the
+    # build system locates BoardConfig.mk via device/<vendor>/<TARGET_DEVICE>.
+    ln -sfn cannong device/xiaomi/cannon
     export ALLOW_MISSING_DEPENDENCIES=true
+    # envsetup.sh and its lunch/m helpers read optional variables such as TOP
+    # without defaults; set -u would abort while sourcing them.
+    set +u
     # shellcheck disable=SC1091
     source build/envsetup.sh
     lunch "$LUNCH_TARGET"
