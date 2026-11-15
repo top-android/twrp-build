@@ -133,6 +133,24 @@ cmd_build() {
     # shellcheck disable=SC1091
     source build/envsetup.sh
     lunch "$LUNCH_TARGET"
+    # TWRP's ramdisk packaging does not track shared libraries installed into
+    # recovery/root, so an incremental build can reuse a stale ramdisk and keep
+    # an old libtwrpminui. Refresh the TWRP libraries in the ramdisk staging
+    # tree, then drop the packaged image and ramdisk intermediates so
+    # recovery.img is always rebuilt from the current staging tree.
+    local product_out="out/target/product/cannon"
+    for abi in lib lib64; do
+      for name in libtwrpminui.so libgui2.so libtwrpperf.so liblvgl_twrp.so libtwrpmtp-ffs.so libresetprop.so; do
+        src="$product_out/system/$abi/$name"
+        dst="$product_out/recovery/root/system/$abi/$name"
+        if [ -f "$src" ] && [ -f "$dst" ]; then cp -f "$src" "$dst"; fi
+      done
+    done
+    rm -f "$product_out/recovery.img" \
+          "$product_out/ramdisk-recovery.img" \
+          "$product_out/ramdisk-recovery.cpio" \
+          "$product_out/recovery/root/ramdisk-files.txt" \
+          "$product_out/recovery/root/ramdisk-files.sha256sum"
     m recoveryimage -j"$JOBS"
     log "产物：$ROM_DIR/out/target/product/cannon/recovery.img"
 }
