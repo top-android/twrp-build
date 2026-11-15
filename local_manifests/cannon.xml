@@ -39,6 +39,6 @@
          真实电量（sysfs 兜底）、状态栏显示秒。revision 固定到提交，保证可复现。 -->
     <project path="bootable/recovery"
              name="twrp_bootable_recovery"
-             remote="top" revision="e004dceaa358727435b107162b9eab66d8ca1bcd" />
+             remote="top" revision="6ee18d45650197fc8f09cf29823c0de2928ef636" />
 
 </manifest>
