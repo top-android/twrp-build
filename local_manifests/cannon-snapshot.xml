@@ -9,7 +9,7 @@
   <default remote="aosp" revision="refs/tags/android-16.0.0_r1" sync-j="4"/>
   
   <project name="android_bionic" path="bionic" remote="twrp-16.0" revision="99926c766ef7f121950611f047dba4769a25226c" upstream="twrp-16.0" dest-branch="twrp-16.0"/>
-  <project name="twrp_bootable_recovery" path="bootable/recovery" remote="top" revision="0890093bbdd4385c7fe98d538afc0c0986927a81" upstream="main" dest-branch="main"/>
+  <project name="twrp_bootable_recovery" path="bootable/recovery" remote="top" revision="6ee18d45650197fc8f09cf29823c0de2928ef636" upstream="main" dest-branch="main"/>
   <project name="twrp_device_xiaomi_cannon" path="device/xiaomi/cannong" remote="top" revision="1c63a5a64d4c96172406bc17bb503d12d9fa4253" upstream="main" dest-branch="main"/>
   <project name="android_build" path="build/make" remote="twrp-16.0" revision="1ff6b0ae732a31412d94882aaa89d030f0a6be17" upstream="twrp-16.0" dest-branch="twrp-16.0">
     <linkfile src="CleanSpec.mk" dest="build/CleanSpec.mk"/>
@@ -55,7 +55,7 @@
   <project name="android_system_security" path="system/security" remote="twrp-16.0" revision="d614e274b585a67e80d3d3fbc3a6e9f695998f78" upstream="twrp-16.0" dest-branch="twrp-16.0"/>
   <project name="android_system_sepolicy" path="system/sepolicy" remote="twrp-16.0" revision="372f37fc90e86824e2f25500ac26f3e2b468c11a" upstream="twrp-16.0" dest-branch="twrp-16.0"/>
   <project name="android_system_update_engine" path="system/update_engine" remote="twrp-16.0" revision="a4c7444f722bada4e3880a5e38b42b9aa4ee37a4" upstream="twrp-16.0" dest-branch="twrp-16.0"/>
-  <project name="android_system_vold" path="system/vold" remote="twrp-16.0" revision="ec3563c6cde26fd67d09e07007c7469395b90926" upstream="twrp-16.0" dest-branch="twrp-16.0"/>
+  <project name="android_system_vold" path="system/vold" remote="twrp-16.0" revision="e7e26ed2ffd9ad0469a05515cfd91940a3366d19" upstream="twrp-16.0" dest-branch="twrp-16.0"/>
   <project name="android_vendor_twrp" path="vendor/twrp" remote="twrp-16.0" revision="4c5070577457a8dbb87f71ed53925cb56b397234" upstream="twrp-16.0" dest-branch="twrp-16.0"/>
   <project name="external_magisk-prebuilt" path="external/magisk-prebuilt" remote="twrp-16.0" revision="06808ed6045f6fdd7752124aba94b9698463c92c" upstream="twrp-16.0" dest-branch="twrp-16.0"/>
   <project name="kernel/configs" revision="e90ea709c3c2ec34bcfd7dca2ebec0bae287c91f" upstream="refs/tags/android-16.0.0_r1" dest-branch="refs/tags/android-16.0.0_r1" groups="pdk,vts"/>
