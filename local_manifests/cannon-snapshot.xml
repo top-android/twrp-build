@@ -9,7 +9,7 @@
   <default remote="aosp" revision="refs/tags/android-16.0.0_r1" sync-j="4"/>
   
   <project name="android_bionic" path="bionic" remote="twrp-16.0" revision="99926c766ef7f121950611f047dba4769a25226c" upstream="twrp-16.0" dest-branch="twrp-16.0"/>
-  <project name="twrp_bootable_recovery" path="bootable/recovery" remote="top" revision="dd4a8d365a14ca967b3dfcf917ed43f09fa63d9e" upstream="main" dest-branch="main"/>
+  <project name="twrp_bootable_recovery" path="bootable/recovery" remote="top" revision="f228b74820b0c6435d932e38e6df75e5b3c1c68f" upstream="main" dest-branch="main"/>
   <project name="twrp_device_xiaomi_cannon" path="device/xiaomi/cannong" remote="top" revision="1c63a5a64d4c96172406bc17bb503d12d9fa4253" upstream="main" dest-branch="main"/>
   <project name="android_build" path="build/make" remote="twrp-16.0" revision="1ff6b0ae732a31412d94882aaa89d030f0a6be17" upstream="twrp-16.0" dest-branch="twrp-16.0">
     <linkfile src="CleanSpec.mk" dest="build/CleanSpec.mk"/>
